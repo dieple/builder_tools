@@ -1,0 +1,4 @@
+.idea/
+Dockerfile
+entry.sh
+pip_packages
