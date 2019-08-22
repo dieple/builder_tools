@@ -5,7 +5,7 @@
 # by setup.py. All modifications should be done in
 # templates/Dockerfile.template
 #################################################################
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 # Set this environment variable to true to set timezone on container start.
 ENV SET_CONTAINER_TIMEZONE false
