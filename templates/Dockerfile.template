@@ -45,7 +45,10 @@ VOLUME ["/repos"]
 RUN mkdir -p /scripts
 ADD pip_packages /scripts
 WORKDIR /scripts
-RUN pip install setuptools && pip install -r pip_packages
+RUN pip install setuptools && \
+	pip freeze && \
+	pip install git+https://github.com/virtuald/pyhcl.git@0.3.12#egg=pyhcl && \
+	pip install -r pip_packages
 ADD scripts/kms_encrypt.py "/scripts"
 ADD scripts/kms_decrypt.py "/scripts"
 ADD scripts/assume-role.sh "/scripts"
