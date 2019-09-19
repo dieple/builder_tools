@@ -34,16 +34,10 @@ The packages are build using pip install if possible, further addons can be incl
 * Install docker on the host machine
 * Python3 on host machine
 * Create developer AWS IAM account, setup MFA on AWS console and noted down the MFA ARN.
-* Create "$HOME/.aws/config" file on host machine with these entries below (edit to match your environment)
-* Create "$HOME/.kube" directory for K8s.
-
-* Docker on your host machine
-* Python3 on your host machine
-* AWS client on your host machine
-* aws-vault on your host machine
-* Create a developer AWS [IAM account] with MFA configured  
 * A note of your MFA ARN for use below
 * A note of your AWS access keys which you created above for your IAM user in the AWS root account
+* AWS client on your host machine
+* aws-vault on your host machine
 * Manually create file `$HOME/.aws/config` on your host machine with entries for the 
 AWS accounts you want to access - see below
 * Manually create `$HOME/.kube` directory for Kubernetes
