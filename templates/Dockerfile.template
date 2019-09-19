@@ -61,6 +61,14 @@ RUN chmod 0700 "/home/${dockerAppUser}/.ssh"
 RUN echo "$sshKey" > "/home/${dockerAppUser}/.ssh/id_rsa" && chmod 0600 "/home/${dockerAppUser}/.ssh/id_rsa"
 RUN echo "$sshKeyPub" > "/home/${dockerAppUser}/.ssh/id_rsa.pub" && chmod 0644 "/home/${dockerAppUser}/.ssh/id_rsa.pub"
 RUN chown -R "${dockerAppUser}:${dockerAppUser}" "/home/${dockerAppUser}/.ssh"
+RUN mkdir /home/${dockerAppUser}/bin
+
+# DataOps Snowflake Cloner tool.
+#COPY bin/sfcloner-linux-amd64-1.0.0 /home/${dockerAppUser}/bin
+#COPY bin/sfcloner /home/${dockerAppUser}/bin
+# This is required when create aws system user (for external S3 and CI/CD purpose)
+COPY bin/dataops.gpg.pub.bin /scripts/dataops.gpg.pub.bin
+RUN chown -R "${dockerAppUser}:${dockerAppUser}" /home/${dockerAppUser}/bin
 
 RUN eval `ssh-agent -s` && \
    printf "${SSH_KEY_PASSPHRASE}\n" | ssh-add /home/${dockerAppUser}/.ssh/id_rsa
@@ -79,7 +87,7 @@ RUN echo '#override PS1' | tee -a "/home/${dockerAppUser}/.bashrc"
 RUN echo "export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '" | tee -a "/home/${dockerAppUser}/.bashrc"
 
 # Add to PATH variable.
-RUN echo 'export PATH=$PATH:/scripts' | tee -a "/home/${dockerAppUser}/.bashrc"
+RUN echo 'export PATH=$PATH:/scripts:~/bin' | tee -a "/home/${dockerAppUser}/.bashrc"
 
 USER ${dockerAppuser}
 #EXPOSE 5000

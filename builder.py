@@ -78,7 +78,7 @@ def make_executable(path):
 
 
 def create_docker_entry_file(entry_filename, args):
-    with open(entry_filename, 'w') as f:
+    with open(entry_filename, 'w', newline='\n') as f:
         gh_email = 'git config --global user.email "{0}"\n'.format(args.githubEmail)
         gh_user = 'git config --global user.name "{0}"\n'.format(args.githubUsername)
         vault_add = "aws-vault add {0}\n".format(args.profile)
@@ -102,7 +102,7 @@ def create_docker_entry_file(entry_filename, args):
 def create_pip_packages_file(args, input_pip_packages_file, output_pip_packages_file):
     # required development packages to install during docker build image
     with open(input_pip_packages_file) as f:
-        with open(output_pip_packages_file, "w") as f1:
+        with open(output_pip_packages_file, "w", newline='\n') as f1:
             for line in f:
                 f1.write(line)
 
@@ -114,7 +114,7 @@ def create_pip_packages_file(args, input_pip_packages_file, output_pip_packages_
 
 def create_dockerfile_from_template(args, dockerfile_template, output_dockerfile):
     with open(dockerfile_template) as fin:
-        with open(output_dockerfile, "w") as fout:
+        with open(output_dockerfile, "w", newline='\n') as fout:
             for line in fin:
                 if (args.installTerraform):
                     # terraform is required
@@ -149,11 +149,11 @@ def build_docker_image(args, dockerfile):
     # dockerAppUser={2} --build-arg sshKeyPassphrase={3} --rm -f {4} -t {5}:latest .'.format(args.profile,
     # args.terraformVersion, args.dockerAppUser, args.sshKeyPassphrase, dockerfile, args.imageName)
     build_command = 'docker build --build-arg profile={0} --build-arg terraformVersion={1} --build-arg ' \
-                    'dockerAppUser={2} --build-arg sshKey="$(cat ~/.ssh/id_rsa)" --build-arg sshKeyPub="$(cat ' \
-                    '~/.ssh/id_rsa.pub)" --build-arg sshKeyPassphrase={3} --build-arg flyCLIVersion={4} --rm -f {5} ' \
+                    'dockerAppUser={2} --build-arg sshKey="$(cat {7}/id_rsa)" --build-arg sshKeyPub="$(cat ' \
+                    '{7}/id_rsa.pub)" --build-arg sshKeyPassphrase={3} --build-arg flyCLIVersion={4} --rm -f {5} ' \
                     '-t {6}:latest .'.format(
         args.profile, args.terraformVersion, args.dockerAppUser, args.sshKeyPassphrase, args.flyCLIVersion, dockerfile,
-        args.imageName)
+        args.imageName, args.sshKeyDir,)
 
     logger.info("build_command: {0}".format(build_command))
     os.system(build_command)

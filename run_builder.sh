@@ -30,7 +30,7 @@ check_params $PROFILE
 # Modify to meet your env!
 #	--shareHostVolume=$HOME/repos Directory on your host which contains your git repos
 
-python ./builder.py --githubUsername=dieple \
+python3 ./builder.py --githubUsername=dieple \
 	--githubEmail=dieple1@gmail.com \
 	--terraformVersion=0.11.13 \
 	--installTerraform=true \

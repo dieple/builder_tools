@@ -46,6 +46,8 @@ RUN set -ex && \
                         bash \
                         openssh-client \
                         openssh-server \
+                        rsync \
+                        grsync \
                         bash-completion && \
             apt-get autoremove -yqq --purge && \
             rm -rf /tmp/*.rpm && \

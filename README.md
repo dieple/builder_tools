@@ -37,6 +37,26 @@ The packages are build using pip install if possible, further addons can be incl
 * Create "$HOME/.aws/config" file on host machine with these entries below (edit to match your environment)
 * Create "$HOME/.kube" directory for K8s.
 
+* Docker on your host machine
+* Python3 on your host machine
+* AWS client on your host machine
+* aws-vault on your host machine
+* Create a developer AWS [IAM account] with MFA configured  
+* A note of your MFA ARN for use below
+* A note of your AWS access keys which you created above for your IAM user in the AWS root account
+* Manually create file `$HOME/.aws/config` on your host machine with entries for the 
+AWS accounts you want to access - see below
+* Manually create `$HOME/.kube` directory for Kubernetes
+* Personal SSH keys created on your host machine and added to your GitHub settings (the ability to clone repos using SSH)  
+
+__`$HOME/.aws/config`__ 
+
+To get started with this file, either take the entries shown below 
+or use the sample file [here](./samples/aws-config.txt)
+and edit to match your IAM user, MFA and account IDs  
+
+The sample file contains entries for DataOps AWS accounts.
+All you need to do is replace text, 'dieple', with your IAM user name.
 
 ```
 [default]
@@ -52,12 +72,81 @@ role_arn=arn:aws:iam::<switch-role-aws-account-id>:role/developers
 ```
 
 
-## Usage
+### Steps
+
+First, clone this repo:
 
 ```bash
-$ git clone_this_repos_into_a_directory...
-$ cd directory   
-$ python3 setup.py -h
+$> mkdir $HOME/repos
+$> cd $HOME/repos
+$> git clone https://github.com/dieple/builder_tools.git
+$> cd builder_tools
+```
+
+Now there are two options to get going. Choose one of these:
+
+1) Create your own launch script  __<<< recommended__
+1) Execute the `builder.py` and supply a bunch of parameters
+
+
+#### Option 1 - Create Your Own Launch Script
+ 
+```bash
+$> # Duplicate an existing script as follows...
+$> cp users/relloyd-run_builder.sh users/<your name>-run_builder.sh
+```
+
+Customise the contents of your new script to include your GitHub username 
+and path to your source code:
+
+```bash
+$> vi users/<your name>-run_builder.sh
+
+# Find these lines in the script and set them to 
+# match your name and path to your source code:
+
+# --githubUsername=dieple          <<< change this to your GitHub user name
+# --githubEmail=dieple1@gmail.com   <<< set this to the email address used with your GitHub account
+# --shareHostVolume=$HOME/repos     <<< set this to match the path to your repos (not the builder-tools directory; 
+# use the parent of builder_tools so you can cd into other repos from withing the docker image
+# this path will be mounted into the Docker image that you build below...)
+```
+
+Execute the following script to build & run the Docker image.
+The aws-vault profile name that you supply should be one matching an entry in 
+the `~/.aws/config` file above.
+ 
+```bash
+$> chmod +x users/<your name>-run_builder.sh  # <<< add execute privs if they're not there already
+$> users/<your name>-run_builder.sh <aws-vault-profile-name>
+    
+... snip
+Successfully built 4f84992ea3d1
+Successfully tagged cloudops:latest
+2019-02-20 16:58:52,107 - root - INFO - run_command: docker run --interactive --tty -u devops --rm --volume "$HOME/.aws:/home/devops/.aws" --volume "$HOME/repos:/repos" cloudops /bin/bash
+
+Enter Access Key ID:                                      <<< Enter your AWS root account IAM user access key ID
+Enter Secret Access Key:                                  <<< Enter your AWS root account IAM user secret key
+Enter passphrase to unlock /home/devops/.awsvault/keys/:  <<< Optionally supply a password - normally blank for your personal machine
+Added credentials to profile "dev" in vault
+Enter passphrase to unlock /home/devops/.awsvault/keys/:                  <<< Ditto
+Enter token for arn:aws:iam:::<aws-account-number-mfa>/<github-user-id>:  <<< Supply your one-time MFA code  
+Enter passphrase to unlock /home/devops/.awsvault/keys/:                  <<< Optionally supply a password - normally blank for your personal machine
+devops@67fb998d20da:/repos$  
+```
+
+Voila you now have a development environment (built within a few minutes) on your host PC or Mac!
+
+Note that `$HOME/repos` is where I checked out the git repos and can be seen in `/repos` in the docker image, where you can run terraform plan, etc. 
+
+
+#### Option 2 - Execute builder.py
+
+After executing the below, follow instructions
+
+```bash
+$ cd builder_tools   
+$ python3 builder.py -h
 
 usage: setup.py [-h] --githubUsername GITHUBUSERNAME --githubEmail GITHUBEMAIL
               --profile PROFILE [--imageName IMAGENAME]
@@ -88,23 +177,11 @@ optional arguments:
                         Install ansible?
   --installTerraform [INSTALLTERRAFORM]
                         Install Terraform?
+```
 
-$ python3 setup.py  --githubUsername=yourGithubUsername --githubEmail=yourGithubEmail --dockerAppUser=devops --profile=enactor-dev
-    
-    
-... snip
-Successfully built 4f84992ea3d1
-Successfully tagged cloudops:latest
-2019-02-20 16:58:52,107 - root - INFO - run_command: docker run --interactive --tty -u devops --rm --volume "$HOME/.aws:/home/devops/.aws" --volume "$HOME/repos:/repos" cloudops /bin/bash
+## What Next?
 
-Enter Access Key ID: YourAccessKeyId
-Enter Secret Access Key: YourAcccessKeySecrets
-Enter passphrase to unlock /home/devops/.awsvault/keys/:
-Added credentials to profile "dev" in vault
-Enter passphrase to unlock /home/devops/.awsvault/keys/:
-Enter token for arn:aws:iam:::<aws-account-number-mfa>/<github-user-id>: 995559
-Enter passphrase to unlock /home/devops/.awsvault/keys/:
-devops@67fb998d20da:/repos$
+### DataOps Deployments
 
 Voila you now have a development environment (built within a few minutes) on your host PC!
 
@@ -135,20 +212,16 @@ DO NOT push or save the developer image back to docker registry as it's got the 
 
 # Terraform Development using Terrascript
 
-#### To create the initial bucket to hold terraform statefile 
+#### To create the initial bucket to hold terraform statefile
+ 
 Make sure this line is enable in build.py: "generate_s3(inargs, True, False)"
 ```bash
-$ cd terrascript/vars
-Modify <module>.yaml to meet your environment
-
-$ # cd to terrascript folder
-$ python build.py
-usage: build.py [-h] -a ACCOUNT -e ENVIRONMENT -c CICD -p PROFILE
-                  [-v VARFILES] [-t TFAPPLY] [-d TFDESTROY]
-build.py: error: the following arguments are required: -a/--account, -e/--environment, -c/--cicd, -p/--profile
-$ # python3 build.py -a <aws-account-name> -c <cicd_mode_true_false> -e <environment> -p <aws-vault-profile-name> -t <terraform_apply_true_false> 
-$ python build.py -a dataops_staging -c false -e staging - p dataops-staging -t true
-
+$ cd $HOME/repos/
+$ git clone git@github.com:dieple/terrascript_011x.git (terraform 0.11.x development)
+$ cd terrascript_011x
+$ Modify vars/<module>.yaml to meet your environment
+$ # Modify run_build.sh to meet your environment
+$ run_build.sh
 ```
 
 
