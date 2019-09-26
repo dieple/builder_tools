@@ -33,6 +33,7 @@ RUN set -ex && \
                         g++ \
                         libffi-dev \
                         libssl-dev \
+                        zip \
                         unzip \
                         tar \
                         postgresql-client \
