@@ -2,22 +2,22 @@
 region=eu-west-1
 
 [profile dataops-dev]
-role_arn=arn:aws:iam::190033888840:role/developers
-mfa_serial=arn:aws:iam::667800118351:mfa/dieple
+role_arn=arn:aws:iam::<switch-role-aws-account-id>:role/developers
+mfa_serial=arn:aws:iam::<login-aws-account-id>:mfa/dieple
 color=80fc00
 
 [profile dataops-staging]
-role_arn=arn:aws:iam::561276803310:role/developers
-mfa_serial=arn:aws:iam::667800118351:mfa/dieple
+role_arn=arn:aws:iam::<switch-role-aws-account-id>:role/developers
+mfa_serial=arn:aws:iam::<login-aws-account-id>:mfa/dieple
 color=fcc168
 
 [profile dataops-prod]
-role_arn=arn:aws:iam::665109639135:role/developers
-mfa_serial=arn:aws:iam::667800118351:mfa/dieple
+role_arn=arn:aws:iam::<switch-role-aws-account-id>:role/developers
+mfa_serial=arn:aws:iam::<login-aws-account-id>:mfa/dieple
 color=fc0000
 
 [profile dataops-prod-admin]
-role_arn=arn:aws:iam::665109639135:role/administrators
-mfa_serial=arn:aws:iam::667800118351:mfa/dieple
+role_arn=arn:aws:iam::<switch-role-aws-account-id>:role/administrators
+mfa_serial=arn:aws:iam::<login-aws-account-id>:mfa/dieple
 color=fc0000
 

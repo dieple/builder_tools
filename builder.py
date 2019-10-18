@@ -47,7 +47,7 @@ def process_arguments():
     optional.add_argument('--dockerAppUser', help='Docker OS App user', default='cloudops')
     optional.add_argument("--installAnsible", type=str2bool, nargs='?', const=True, default=True,
                           help="Install ansible?")
-    optional.add_argument('--terraformVersion', help='Terraform version', default='0.11.13')
+    optional.add_argument('--terraformVersion', help='Terraform version', default='0.11.14')
     optional.add_argument("--installTerraform", type=str2bool, nargs='?', const=True, default=True,
                           help="Install Terraform?")
     optional.add_argument("--sshKeyDir", default="{0}/.ssh".format(home_dir), help="Host ssh directory")
@@ -168,9 +168,11 @@ def run_docker_image(args, dockerfile):
     # for dir in [".ssh", ".aws", ".kube" ]:
     #     os.system("mkdir -p {0}".format(dir))
 
+    tf_cache_plugins_dir = "{0}/.terraform.d/plugin-cache".format(home_dir)
+
     run_command = 'docker run -e "SET_CONTAINER_TIMEZONE=true" -e "CONTAINER_TIMEZONE=Europe/London" --interactive --tty -u {0} --rm --volume "{1}:/home/{0}/.kube" --volume "{2}:/home/{' \
-                  '0}/.ssh" --volume "{3}:/home/{0}/.aws" --volume "{4}:/repos" {5} /bin/bash'.format(
-        args.dockerAppUser, args.kubeConfigDir, args.sshKeyDir, args.awsConfigDir, args.shareHostVolume, args.imageName)
+                  '0}/.ssh" --volume "{3}:/home/{0}/.aws" --volume "{4}:/repos" --volume "{5}:/home/{0}/.terraform.d/plugin-cache" {6} /bin/bash'.format(
+        args.dockerAppUser, args.kubeConfigDir, args.sshKeyDir, args.awsConfigDir, args.shareHostVolume, tf_cache_plugins_dir, args.imageName)
 
     logger.info("run_command: {0}".format(run_command))
     os.system(run_command)

@@ -26,15 +26,16 @@ fi
 ####
 
 check_params $PROFILE
+echo $PROFILE
 
 # Modify to meet your env!
 #	--shareHostVolume=$HOME/repos Directory on your host which contains your git repos
 
 python3 ./builder.py --githubUsername=dieple \
 	--githubEmail=dieple1@gmail.com \
-	--terraformVersion=0.11.13 \
+	--terraformVersion=0.11.14 \
 	--installTerraform=true \
-	--dockerAppUser=dataops \
+	--dockerAppUser=$PROFILE \
 	--profile=$PROFILE \
 	--shareHostVolume=$HOME/repos \
 	--imageName=$PROFILE
