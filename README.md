@@ -87,7 +87,7 @@ Now there are two options to get going. Choose one of these:
  
 ```bash
 $> # Duplicate an existing script as follows...
-$> cp users/relloyd-run_builder.sh users/<your name>-run_builder.sh
+$> cp users/dieple-run_builder.sh users/<your name>-run_builder.sh
 ```
 
 Customise the contents of your new script to include your GitHub username 
@@ -221,7 +221,6 @@ $ run_build.sh
 
 #### To create a new VPC
 ```bash
-$ # Make sure this line is in build.py: generate_vpc(inargs)
 $ python build.py -a dataops_staging -c false -e staging - p dataops-staging -t true
 
 ```
