@@ -85,11 +85,22 @@ def create_docker_entry_file(entry_filename, args):
         vault_exec = "aws-vault exec --assume-role-ttl=1h --session-ttl=12h {0} -- bash\n".format(args.profile)
         # assume_role = "set -x && . /scripts/assume-role.sh {0} reassume-role\n".format(args.profile)
         # vault_add_mngmt = "aws-vault add {0}\n".format(args.profile.split('-')[0] + "-management")
+
+        if "0.12" in args.terraformVersion:
+            clone_repo = 'cd /tmp && git clone https://github.com/mjuenema/python-terrascript.git\n'
+            install_terrascript = 'cd /tmp/python-terrascript && git checkout develop && make install && cd /repos\n'
+
         f.write('#!/bin/bash\n\n')
         f.write(gh_email)
         f.write(gh_user)
+
+        if "0.12" in args.terraformVersion:
+            f.write(clone_repo)
+            f.write(install_terrascript)
+
         f.write(vault_add)
         f.write(vault_exec)
+
         # f.write(assume_role)
         # f.write("\nhelm init\n")
         # f.write("helm repo update\n")
@@ -100,6 +111,7 @@ def create_docker_entry_file(entry_filename, args):
 
 
 def create_pip_packages_file(args, input_pip_packages_file, output_pip_packages_file):
+
     # required development packages to install during docker build image
     with open(input_pip_packages_file) as f:
         with open(output_pip_packages_file, "w", newline='\n') as f1:
@@ -111,6 +123,11 @@ def create_pip_packages_file(args, input_pip_packages_file, output_pip_packages_
         with open(output_pip_packages_file, "a") as f:
             f.write("ansible=={0}\n".format(args.ansibleVersion))
 
+    if "0.11" in args.terraformVersion:
+        # terraform module 0.11.x is used
+				# version 0.12.x is dealt with entry.sh file
+        with open(output_pip_packages_file, "a") as f:
+            f.write("terrascript==0.6.1\n")
 
 def create_dockerfile_from_template(args, dockerfile_template, output_dockerfile):
     with open(dockerfile_template) as fin:
