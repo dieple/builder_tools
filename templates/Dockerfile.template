@@ -43,19 +43,22 @@ VOLUME ["/repos"]
 
 #ADD api-server.py /scripts
 RUN mkdir -p /scripts
-ADD pip_packages /scripts
-COPY scripts/secrets /scripts/secrets
+COPY scripts/packages /scripts/packages
+ADD pip_packages /scripts/packages/
 ADD scripts/kms_encrypt.py "/scripts"
 ADD scripts/kms_decrypt.py "/scripts"
 ADD scripts/assume-role.sh "/scripts"
 ADD scripts/ntp.sh "/scripts"
 RUN /scripts/ntp.sh
 RUN chown -R "${dockerAppUser}:${dockerAppUser}" /scripts
-WORKDIR /scripts
+WORKDIR /scripts/packages
 RUN pip install setuptools && \
 	pip freeze && \
 	pip install git+https://github.com/virtuald/pyhcl.git@0.3.12#egg=pyhcl && \
-	pip install -r pip_packages && pip install ./secrets
+	pip install -r pip_packages && \
+	pip install ./secrets && \
+	pip install ./render-templates && \
+	pip install ./pgbackup
 
 RUN rm -rf $HOME/.cache
 RUN mkdir -p "/home/${dockerAppUser}/.ssh"
