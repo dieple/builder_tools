@@ -83,6 +83,9 @@ RUN echo 'source <(kubectl completion bash)' | tee -a "/home/${dockerAppUser}/.b
 RUN echo 'alias k=kubectl' | tee -a "/home/${dockerAppUser}/.bashrc"
 RUN echo 'alias k9s="export TERM=xterm && k9s"' | tee -a "/home/${dockerAppUser}/.bashrc"
 
+RUN curl --silent --location "https://get.pulumi.com/releases/sdk/pulumi-v1.5.2-linux-x64.tar.gz" | tar xz -C /tmp && mv /tmp/pulumi "/home/${dockerAppUser}/bin/" && chmod -R 755 "/home/${dockerAppUser}/bin/"
+RUN echo "export PATH=$PATH:/home/${dockerAppUser}/bin/pulumi" | tee -a "/home/${dockerAppUser}/.bashrc"
+
 # Set the vault profile in the environment for assume-role scripts.
 ENV VAULT_PROFILE=$profile
 

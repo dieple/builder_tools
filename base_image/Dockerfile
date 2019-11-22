@@ -89,6 +89,8 @@ RUN wget -q https://github.com/derailed/k9s/releases/download/0.7.13/k9s_0.7.13_
 
 RUN curl -sL -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.12.6/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl
 
+
+
 RUN rm -rf /root/.cache
 RUN rm -rf /tmp/*
 

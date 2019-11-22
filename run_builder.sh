@@ -30,6 +30,7 @@ echo $PROFILE
 
 # Modify to meet your env!
 #	--shareHostVolume=$HOME/repos Directory on your host which contains your git repos
+#	--terraformVersion=0.12.15 \
 
 python3 ./builder.py --githubUsername=dieple \
 	--githubEmail=dieple1@gmail.com \
