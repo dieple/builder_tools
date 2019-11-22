@@ -91,6 +91,7 @@ def create_docker_entry_file(entry_filename, args):
             install_terrascript = 'cd /tmp/python-terrascript && git checkout develop && make install && cd /repos\n'
 
         f.write('#!/bin/bash\n\n')
+        f.write('# Please do not modify this file manually as it generate by builder.py\n\n')
         f.write(gh_email)
         f.write(gh_user)
 

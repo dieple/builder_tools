@@ -2,7 +2,7 @@
 # CloudOps IaC Local Development Environment
 #
 # Please do not modify the Dockerfile manually as it generate
-# by setup.py. All modifications should be done in
+# by builder.py. All modifications should be done in
 # templates/Dockerfile.template
 #################################################################
 FROM ubuntu:18.04

@@ -1,5 +1,5 @@
 #
-# Warning - auto generate by run.py
+# Warning - auto generate by builder.py
 # Make modifications in templates/pip_packages.template
 #
 Flask==0.12.2
